@@ -62,8 +62,8 @@ Design rules: remain dependency-free, work from a local file, and track only ver
         <p>A terminal coding agent that reads and edits real files, asks before dangerous actions, compacts its context, checkpoints its work, resumes after a crash, and dispatches sub-agents.</p>
       </div>
       <aside class="status">
-        <strong>Day 1 complete</strong>
-        <p>Provider adapter, neutral messages, safe tool loop, and dice demo are implemented in <code>Assembler/</code>.</p>
+        <strong>Day 2 complete</strong>
+        <p>Provider adapter, agent loop, six confined local tools, and an approval policy are implemented in <code>Assembler/</code>.</p>
       </aside>
     </section>
 
@@ -79,7 +79,7 @@ Design rules: remain dependency-free, work from a local file, and track only ver
         </article>
         <article class="module">
           <div class="number">02</div><div class="module-content">
-            <p class="meta">Day 2 · 7–9 AM IST</p><h3>Tools &amp; the Execution Environment</h3>
+            <p class="meta">Day 2 · 7–9 AM IST <span class="complete">Built</span></p><h3>Tools &amp; the Execution Environment</h3>
             <ul><li>Tool schemas as contracts: read, write, edit, bash, and search</li><li>Streaming tool calls and partial results into a terminal UI</li><li>Permission gates, approval modes, sandboxing, and blast radius</li></ul>
             <p class="build"><b>You build —</b> real file and shell tools wired into your loop, able to edit code safely on your machine.</p>
           </div>
@@ -111,7 +111,7 @@ Design rules: remain dependency-free, work from a local file, and track only ver
       <p class="eyebrow">The project, layer by layer</p><h2 id="architecture">Small enough to understand completely.<br>Real enough to use on Monday.</h2>
       <div class="layers">
         <article class="layer"><b>Layer 1</b><h3>The loop</h3><p>Streaming turns, stop conditions, and tool dispatch.</p></article>
-        <article class="layer"><b>Layer 2</b><h3>Tools + guardrails</h3><p>File and shell tools, schemas, approvals, and sandboxing.</p></article>
+        <article class="layer"><b>Layer 2</b><h3>Tools + guardrails</h3><p>Confined file and shell tools, schemas, approval policy, and sandboxing.</p></article>
         <article class="layer"><b>Layer 3</b><h3>Context engine</h3><p>Budgets, compaction, memory files, and system prompt.</p></article>
         <article class="layer"><b>Layer 4</b><h3>Durability</h3><p>Checkpoints, replay, and resumable sessions.</p></article>
         <article class="layer"><b>Layer 5</b><h3>Orchestration</h3><p>Sub-agents, handoffs, and human-in-the-loop.</p></article>
