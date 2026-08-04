@@ -25,6 +25,15 @@ Design rules: remain dependency-free, work from a local file, and track only ver
     .status { padding:25px; border:1px solid var(--line); background:var(--card); }
     .status strong { display:block; color:var(--teal); font-size:2.2rem; }
     .status p { margin:4px 0 0; color:var(--muted); }
+    .checkpoint { margin:0 0 62px; padding:34px; border:1px solid var(--line); background:var(--card); }
+    .checkpoint > p { max-width:710px; margin:0 0 24px; color:var(--muted); }
+    .checkpoint-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .checkpoint-card { padding:22px; border-top:4px solid var(--teal); background:#edf6f4; }
+    .checkpoint-card:first-child { border-top-color:var(--accent); background:#fdf0e5; }
+    .checkpoint-card h3 { font-size:1.4rem; }
+    .checkpoint-card p { margin:10px 0; }
+    .checkpoint-card ul { margin:10px 0 0; font-size:.93rem; }
+    .verified { color:#075e5b; font-weight:800; }
     .modules { display:grid; gap:18px; margin:0 0 62px; }
     .module { display:grid; grid-template-columns:116px 1fr; overflow:hidden; border:1px solid var(--line); background:var(--card); }
     .number { padding:25px; color:#fffaf0; background:var(--ink); font:3.8rem/.9 Georgia, serif; }
@@ -46,7 +55,7 @@ Design rules: remain dependency-free, work from a local file, and track only ver
     .layer p { margin:0; color:#ced8d8; font-size:.91rem; }
     footer { padding:40px 0 55px; color:var(--muted); }
     code { padding:2px 5px; border-radius:3px; background:#eeeae2; font-size:.9em; }
-    @media (max-width:760px) { .intro { grid-template-columns:1fr; } .module { grid-template-columns:80px 1fr; } .number { padding:22px 14px; font-size:2.6rem; } .module-content { padding:22px; } .layers { grid-template-columns:1fr; } }
+    @media (max-width:760px) { .intro, .checkpoint-grid { grid-template-columns:1fr; } .module { grid-template-columns:80px 1fr; } .number { padding:22px 14px; font-size:2.6rem; } .module-content { padding:22px; } .layers { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -65,6 +74,26 @@ Design rules: remain dependency-free, work from a local file, and track only ver
         <strong>Day 2 complete</strong>
         <p>Provider adapter, agent loop, six confined local tools, and an approval policy are implemented in <code>Assembler/</code>.</p>
       </aside>
+    </section>
+
+    <section class="checkpoint" aria-labelledby="checkpoint-title">
+      <p class="eyebrow">Verified build record</p>
+      <h2 id="checkpoint-title">What we have built so far</h2>
+      <p>Each checkpoint records implementation that exists in the repository and behavior that has been exercised—not planned features.</p>
+      <div class="checkpoint-grid">
+        <article class="checkpoint-card">
+          <p class="meta">Day 1 · the agent loop</p>
+          <h3>A neutral model harness</h3>
+          <p>Implemented <code>Assembler/provider.py</code> and <code>Assembler/loop.py</code>, plus the <code>day1_dice.py</code> demo.</p>
+          <ul><li>Gemini client converts neutral messages to provider wire format and preserves thought signatures across tool turns.</li><li>Retry backoff contains transient API failures; response parsing returns text, tool calls, and usage.</li><li>The loop emits events, executes calls in order, catches tool failures, and has a final turn-limit wrap-up.</li></ul>
+        </article>
+        <article class="checkpoint-card">
+          <p class="meta">Day 2 · tools &amp; guardrails</p>
+          <h3>A confined coding environment</h3>
+          <p>Implemented <code>Assembler/tools.py</code>, <code>Assembler/security.py</code>, and the <code>day2_build.py</code> demo.</p>
+          <ul><li>Six real tools: read, write, unique edit, shell, file listing, and regex search—each file path is confined to the working directory.</li><li>Policy modes support read-only, approval-gated safe mode, and yolo mode; dangerous shell commands remain blocked in every mode.</li><li><span class="verified">Verified with Gemini:</span> an iterative <code>fib.py</code> was created and run in a temporary directory, producing <code>832040</code>.</li><li><span class="verified">Safety checks:</span> home-directory deletion returns a blocked tool result, and an attempted <code>../../etc/passwd</code> read raises an <code>escapes the working directory</code> permission error rather than crashing the loop.</li></ul>
+        </article>
+      </div>
     </section>
 
     <section aria-labelledby="curriculum">
