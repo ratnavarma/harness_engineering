@@ -1,0 +1,152 @@
+<!--
+Day 1–5: Assembler workshop learning guide.
+Concept: make the curriculum, build milestones, and final architecture visible in one place.
+Design rules: remain dependency-free, work from a local file, and track only verified progress.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assembler — Harness Engineering Workshop</title>
+  <style>
+    :root { --ink:#18212b; --paper:#f8f6f0; --card:#fffdf8; --line:#d9d3c7; --accent:#e66036; --teal:#0d7c78; --muted:#69737d; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--paper); font:16px/1.55 Inter, ui-sans-serif, system-ui, sans-serif; }
+    header { padding:78px max(7vw,28px) 62px; color:#fffaf0; background:linear-gradient(120deg,#18212b 0%,#24394b 57%,#0d7c78 100%); }
+    .eyebrow { margin:0 0 18px; color:#f9b58b; font-size:.78rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+    h1 { max-width:850px; margin:0; font-family:Georgia, serif; font-size:clamp(2.8rem,8vw,6.3rem); font-weight:400; letter-spacing:-.06em; line-height:.92; }
+    header p { max-width:650px; margin:30px 0 0; color:#dbe6e8; font-size:1.15rem; }
+    main { width:min(1120px,86vw); margin:0 auto; }
+    .intro { display:grid; grid-template-columns:1.3fr .7fr; gap:34px; margin:58px 0; }
+    h2 { margin:0 0 14px; font-family:Georgia, serif; font-size:2.1rem; font-weight:400; letter-spacing:-.035em; }
+    .promise { padding:27px; border-left:5px solid var(--accent); background:#fce8d8; }
+    .promise p { margin:0; font-size:1.08rem; }
+    .status { padding:25px; border:1px solid var(--line); background:var(--card); }
+    .status strong { display:block; color:var(--teal); font-size:2.2rem; }
+    .status p { margin:4px 0 0; color:var(--muted); }
+    .checkpoint { margin:0 0 62px; padding:34px; border:1px solid var(--line); background:var(--card); }
+    .checkpoint > p { max-width:710px; margin:0 0 24px; color:var(--muted); }
+    .checkpoint-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .checkpoint-card { padding:22px; border-top:4px solid var(--teal); background:#edf6f4; }
+    .checkpoint-card:first-child { border-top-color:var(--accent); background:#fdf0e5; }
+    .checkpoint-card h3 { font-size:1.4rem; }
+    .checkpoint-card p { margin:10px 0; }
+    .checkpoint-card ul { margin:10px 0 0; font-size:.93rem; }
+    .verified { color:#075e5b; font-weight:800; }
+    .modules { display:grid; gap:18px; margin:0 0 62px; }
+    .module { display:grid; grid-template-columns:116px 1fr; overflow:hidden; border:1px solid var(--line); background:var(--card); }
+    .number { padding:25px; color:#fffaf0; background:var(--ink); font:3.8rem/.9 Georgia, serif; }
+    .module:nth-child(even) .number { background:var(--teal); }
+    .module-content { padding:26px 30px 29px; }
+    .meta { margin:0 0 9px; color:var(--accent); font-size:.76rem; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
+    h3 { margin:0; font-family:Georgia, serif; font-size:1.7rem; font-weight:400; letter-spacing:-.03em; }
+    ul { margin:15px 0; padding-left:21px; }
+    li { margin:4px 0; }
+    .build { margin:19px 0 0; padding:13px 15px; border-radius:4px; background:#e8f4f1; }
+    .build b { color:var(--teal); }
+    .complete { display:inline-block; margin-left:10px; padding:3px 8px; border-radius:99px; color:#075e5b; background:#cce8df; font:700 .67rem/1.2 ui-sans-serif, system-ui, sans-serif; letter-spacing:.07em; text-transform:uppercase; vertical-align:middle; }
+    .architecture { margin:0 -7vw 0; padding:62px 7vw; color:#fffaf0; background:#18212b; }
+    .architecture h2 { color:#fffaf0; }
+    .layers { display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:#50606d; }
+    .layer { min-height:205px; padding:22px; background:#24313d; }
+    .layer b { display:block; color:#f9b58b; font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; }
+    .layer h3 { margin:10px 0 8px; font-size:1.35rem; }
+    .layer p { margin:0; color:#ced8d8; font-size:.91rem; }
+    footer { padding:40px 0 55px; color:var(--muted); }
+    code { padding:2px 5px; border-radius:3px; background:#eeeae2; font-size:.9em; }
+    @media (max-width:760px) { .intro, .checkpoint-grid { grid-template-columns:1fr; } .module { grid-template-columns:80px 1fr; } .number { padding:22px 14px; font-size:2.6rem; } .module-content { padding:22px; } .layers { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">Harness Engineering Workshop · 7–9 AM IST</p>
+    <h1>Build the agent<br>you can explain.</h1>
+    <p>Assembler is a minimal Python harness built in public over five mornings: no agent SDK, no hidden magic, and no layer you cannot inspect.</p>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="promise">
+        <h2>By Friday, this runs on your machine — and you wrote every line.</h2>
+        <p>A terminal coding agent that reads and edits real files, asks before dangerous actions, compacts its context, checkpoints its work, resumes after a crash, and dispatches sub-agents.</p>
+      </div>
+      <aside class="status">
+        <strong>Day 2 complete</strong>
+        <p>Provider adapter, agent loop, six confined local tools, and an approval policy are implemented in <code>Assembler/</code>.</p>
+      </aside>
+    </section>
+
+    <section class="checkpoint" aria-labelledby="checkpoint-title">
+      <p class="eyebrow">Verified build record</p>
+      <h2 id="checkpoint-title">What we have built so far</h2>
+      <p>Each checkpoint records implementation that exists in the repository and behavior that has been exercised—not planned features.</p>
+      <div class="checkpoint-grid">
+        <article class="checkpoint-card">
+          <p class="meta">Day 1 · the agent loop</p>
+          <h3>A neutral model harness</h3>
+          <p>Implemented <code>Assembler/provider.py</code> and <code>Assembler/loop.py</code>, plus the <code>day1_dice.py</code> demo.</p>
+          <ul><li>Gemini client converts neutral messages to provider wire format and preserves thought signatures across tool turns.</li><li>Retry backoff contains transient API failures; response parsing returns text, tool calls, and usage.</li><li>The loop emits events, executes calls in order, catches tool failures, and has a final turn-limit wrap-up.</li></ul>
+        </article>
+        <article class="checkpoint-card">
+          <p class="meta">Day 2 · tools &amp; guardrails</p>
+          <h3>A confined coding environment</h3>
+          <p>Implemented <code>Assembler/tools.py</code>, <code>Assembler/security.py</code>, and the <code>day2_build.py</code> demo.</p>
+          <ul><li>Six real tools: read, write, unique edit, shell, file listing, and regex search—each file path is confined to the working directory.</li><li>Policy modes support read-only, approval-gated safe mode, and yolo mode; dangerous shell commands remain blocked in every mode.</li><li><span class="verified">Verified with Gemini:</span> an iterative <code>fib.py</code> was created and run in a temporary directory, producing <code>832040</code>.</li><li><span class="verified">Safety checks:</span> home-directory deletion returns a blocked tool result, and an attempted <code>../../etc/passwd</code> read raises an <code>escapes the working directory</code> permission error rather than crashing the loop.</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="curriculum">
+      <p class="eyebrow" id="curriculum">The curriculum</p>
+      <div class="modules">
+        <article class="module">
+          <div class="number">01</div><div class="module-content">
+            <p class="meta">Day 1 · 7–9 AM IST <span class="complete">Built</span></p><h3>The Anatomy of a Harness</h3>
+            <ul><li>Why “just call the API” fails: transactional inference vs. a real agent</li><li>Dissect Claude Code, pi, and Hermes: what every layer does</li><li>Prompt vs. context vs. harness engineering; messages, turns, stop conditions, and streaming</li></ul>
+            <p class="build"><b>You build —</b> a bare harness: model client, message array, and a hand-rolled loop that runs until the model stops asking for work.</p>
+          </div>
+        </article>
+        <article class="module">
+          <div class="number">02</div><div class="module-content">
+            <p class="meta">Day 2 · 7–9 AM IST <span class="complete">Built</span></p><h3>Tools &amp; the Execution Environment</h3>
+            <ul><li>Tool schemas as contracts: read, write, edit, bash, and search</li><li>Streaming tool calls and partial results into a terminal UI</li><li>Permission gates, approval modes, sandboxing, and blast radius</li></ul>
+            <p class="build"><b>You build —</b> real file and shell tools wired into your loop, able to edit code safely on your machine.</p>
+          </div>
+        </article>
+        <article class="module">
+          <div class="number">03</div><div class="module-content">
+            <p class="meta">Day 3 · 7–9 AM IST</p><h3>Context Engineering Inside the Harness</h3>
+            <ul><li>Context budgets: what belongs in every turn and what gets evicted</li><li>Compaction and summarization for long-running sessions</li><li>Session state, persistent memory files, and system prompts as infrastructure</li></ul>
+            <p class="build"><b>You build —</b> compaction plus persistent memory, so the harness survives a 200-turn session.</p>
+          </div>
+        </article>
+        <article class="module">
+          <div class="number">04</div><div class="module-content">
+            <p class="meta">Day 4 · 7–9 AM IST</p><h3>Durability, Recovery &amp; Orchestration</h3>
+            <ul><li>Checkpoint every model turn and tool call; replay after restart</li><li>Retries, failure classification, resumable sessions, and self-healing loops</li><li>Sub-agents, handoffs, supervision, plans, approvals, and escalation</li></ul>
+            <p class="build"><b>You build —</b> checkpointed execution and a sub-agent dispatcher with an approval gate.</p>
+          </div>
+        </article>
+        <article class="module">
+          <div class="number">05</div><div class="module-content">
+            <p class="meta">Day 5 · 7–9 AM IST</p><h3>Production Harnesses &amp; Capstone</h3>
+            <ul><li>pi internals: extensions, <code>models.json</code>, and minimal surface area</li><li>Hermes and Claude Code: skills, hooks, MCP, and sub-agent types</li><li>Harness evaluation: how you know yours actually works</li></ul>
+            <p class="build"><b>Capstone —</b> assemble and demo your pi-style harness: loop, tools, context engine, recovery, and orchestration.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+    <section class="architecture" aria-labelledby="architecture">
+      <p class="eyebrow">The project, layer by layer</p><h2 id="architecture">Small enough to understand completely.<br>Real enough to use on Monday.</h2>
+      <div class="layers">
+        <article class="layer"><b>Layer 1</b><h3>The loop</h3><p>Streaming turns, stop conditions, and tool dispatch.</p></article>
+        <article class="layer"><b>Layer 2</b><h3>Tools + guardrails</h3><p>Confined file and shell tools, schemas, approval policy, and sandboxing.</p></article>
+        <article class="layer"><b>Layer 3</b><h3>Context engine</h3><p>Budgets, compaction, memory files, and system prompt.</p></article>
+        <article class="layer"><b>Layer 4</b><h3>Durability</h3><p>Checkpoints, replay, and resumable sessions.</p></article>
+        <article class="layer"><b>Layer 5</b><h3>Orchestration</h3><p>Sub-agents, handoffs, and human-in-the-loop.</p></article>
+      </div>
+    </section>
+    <footer>Assembler workshop · Training material is maintained alongside the code in this repository.</footer>
+  </main>
+</body>
+</html>
