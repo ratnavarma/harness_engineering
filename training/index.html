@@ -27,7 +27,7 @@ Design rules: remain dependency-free, work from a local file, and track only ver
     .status p { margin:4px 0 0; color:var(--muted); }
     .checkpoint { margin:0 0 62px; padding:34px; border:1px solid var(--line); background:var(--card); }
     .checkpoint > p { max-width:710px; margin:0 0 24px; color:var(--muted); }
-    .checkpoint-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .checkpoint-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:18px; }
     .checkpoint-card { padding:22px; border-top:4px solid var(--teal); background:#edf6f4; }
     .checkpoint-card:first-child { border-top-color:var(--accent); background:#fdf0e5; }
     .checkpoint-card h3 { font-size:1.4rem; }
@@ -71,8 +71,8 @@ Design rules: remain dependency-free, work from a local file, and track only ver
         <p>A terminal coding agent that reads and edits real files, asks before dangerous actions, compacts its context, checkpoints its work, resumes after a crash, and dispatches sub-agents.</p>
       </div>
       <aside class="status">
-        <strong>Day 2 complete</strong>
-        <p>Provider adapter, agent loop, six confined local tools, and an approval policy are implemented in <code>Assembler/</code>.</p>
+        <strong>Day 3 complete</strong>
+        <p>Provider adapter, agent loop, confined tools, approval policy, context compaction, durable memory, and skills are implemented in <code>Assembler/</code>.</p>
       </aside>
     </section>
 
@@ -92,6 +92,12 @@ Design rules: remain dependency-free, work from a local file, and track only ver
           <h3>A confined coding environment</h3>
           <p>Implemented <code>Assembler/tools.py</code>, <code>Assembler/security.py</code>, and the <code>day2_build.py</code> demo.</p>
           <ul><li>Six real tools: read, write, unique edit, shell, file listing, and regex search—each file path is confined to the working directory.</li><li>Policy modes support read-only, approval-gated safe mode, and yolo mode; dangerous shell commands remain blocked in every mode.</li><li><span class="verified">Verified with Gemini:</span> an iterative <code>fib.py</code> was created and run in a temporary directory, producing <code>832040</code>.</li><li><span class="verified">Safety checks:</span> home-directory deletion returns a blocked tool result, and an attempted <code>../../etc/passwd</code> read raises an <code>escapes the working directory</code> permission error rather than crashing the loop.</li></ul>
+        </article>
+        <article class="checkpoint-card">
+          <p class="meta">Day 3 · context, memory &amp; skills</p>
+          <h3>A harness that carries the plot</h3>
+          <p>Implemented <code>Assembler/context.py</code>, <code>Assembler/memory.py</code>, <code>Assembler/skills.py</code>, and the <code>day3_context.py</code> demo.</p>
+          <ul><li>Context is estimated at four characters per token; older messages are compacted into a factual summary while six recent messages remain available.</li><li><code>Assembler.md</code> is append-only durable project memory and becomes part of each freshly built system prompt.</li><li>Filesystem skills expose a compact catalog and load full <code>SKILL.md</code> instructions only when needed.</li><li><span class="verified">Verified:</span> five write/read file pairs triggered compaction at a 1,500-token budget; a fresh Gemini conversation recalled “Kepler”; and a loaded brand-voice skill produced an “Ahoy” pirate welcome.</li></ul>
         </article>
       </div>
     </section>
@@ -115,7 +121,7 @@ Design rules: remain dependency-free, work from a local file, and track only ver
         </article>
         <article class="module">
           <div class="number">03</div><div class="module-content">
-            <p class="meta">Day 3 · 7–9 AM IST</p><h3>Context Engineering Inside the Harness</h3>
+            <p class="meta">Day 3 · 7–9 AM IST <span class="complete">Built</span></p><h3>Context Engineering Inside the Harness</h3>
             <ul><li>Context budgets: what belongs in every turn and what gets evicted</li><li>Compaction and summarization for long-running sessions</li><li>Session state, persistent memory files, and system prompts as infrastructure</li></ul>
             <p class="build"><b>You build —</b> compaction plus persistent memory, so the harness survives a 200-turn session.</p>
           </div>
@@ -141,7 +147,7 @@ Design rules: remain dependency-free, work from a local file, and track only ver
       <div class="layers">
         <article class="layer"><b>Layer 1</b><h3>The loop</h3><p>Streaming turns, stop conditions, and tool dispatch.</p></article>
         <article class="layer"><b>Layer 2</b><h3>Tools + guardrails</h3><p>Confined file and shell tools, schemas, approval policy, and sandboxing.</p></article>
-        <article class="layer"><b>Layer 3</b><h3>Context engine</h3><p>Budgets, compaction, memory files, and system prompt.</p></article>
+        <article class="layer"><b>Layer 3</b><h3>Context engine</h3><p>Budgets, compaction, durable memory, skill catalog, and system prompt.</p></article>
         <article class="layer"><b>Layer 4</b><h3>Durability</h3><p>Checkpoints, replay, and resumable sessions.</p></article>
         <article class="layer"><b>Layer 5</b><h3>Orchestration</h3><p>Sub-agents, handoffs, and human-in-the-loop.</p></article>
       </div>
