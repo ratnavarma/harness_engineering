@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driftwood Roasters | Specialty Coffee in Goa</title>
+    <style>
+        :root {
+            --color-bg: #faf8f5;
+            --color-text: #2d2a26;
+            --color-primary: #d35400;
+            --color-secondary: #2c3e50;
+            --color-accent: #e67e22;
+            --color-surface: #ffffff;
+            --color-border: #e0dcd3;
+            --color-muted: #7f8c8d;
+            
+            --font-sans: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 4rem;
+            --spacing-xxl: 8rem;
+            
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --color-bg: #1a1a1a;
+            --color-text: #f5f5f5;
+            --color-primary: #e67e22;
+            --color-secondary: #ecf0f1;
+            --color-accent: #d35400;
+            --color-surface: #2a2a2a;
+            --color-border: #404040;
+            --color-muted: #a0a0a0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            transition: background-color var(--transition-normal), color var(--transition-normal);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-serif);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-secondary);
+        }
+
+        p {
+            margin-bottom: var(--spacing-md);
+        }
+
+        a {
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        a:hover, a:focus {
+            color: var(--color-accent);
+            text-decoration: underline;
+        }
+
+        /* Focus states */
+        :focus-visible {
+            outline: 3px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        section {
+            padding: var(--spacing-xl) 0;
+        }
+
+        /* Sticky Nav */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--spacing-md) 0;
+            transition: background-color var(--transition-normal);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .logo:hover {
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--spacing-lg);
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--color-text);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-xs);
+            border-radius: 50%;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            align-items: center;
+            min-height: 80vh;
+            padding: var(--spacing-xxl) 0;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--color-muted);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background-color: var(--color-primary);
+            color: #fff;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .btn:hover {
+            background-color: var(--color-accent);
+            color: #fff;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-image svg {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+        }
+
+        /* Origin Cards */
+        .origins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin: var(--spacing-md) 0;
+        }
+
+        /* Brew Guides Tabs */
+        .tabs-container {
+            margin-top: var(--spacing-xl);
+        }
+
+        .tab-list {
+            display: flex;
+            gap: var(--spacing-sm);
+            border-bottom: 2px solid var(--color-border);
+            margin-bottom: var(--spacing-lg);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: var(--spacing-md) var(--spacing-lg);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: color var(--transition-fast), border-color var(--transition-fast);
+        }
+
+        .tab-btn[aria-selected="true"] {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-panel[aria-hidden="false"] {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Subscriptions */
+        .pricing-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--color-border);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--color-primary);
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--color-primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .pricing-card {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+        }
+        
+        .pricing-card.featured {
+            border: 2px solid var(--color-primary);
+            transform: scale(1.05);
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+            margin: var(--spacing-md) 0;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: var(--color-muted);
+        }
+
+        /* FAQ Accordion */
+        .accordion {
+            margin-top: var(--spacing-xl);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .accordion-btn {
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: var(--spacing-lg) 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--color-secondary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .accordion-content-inner {
+            padding-bottom: var(--spacing-lg);
+            color: var(--color-muted);
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-btn[aria-expanded="true"] .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            padding: var(--spacing-xl) 0;
+            margin-top: var(--spacing-xxl);
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .nav-links {
+                display: none; /* In a real app, add a hamburger menu */
+            }
+            
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+        
+        /* Utility for SVGs */
+        .inline-svg {
+            display: block;
+            margin: var(--spacing-lg) auto;
+            max-width: 200px;
+            height: auto;
+            stroke: var(--color-primary);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="#" class="logo">Driftwood Roasters</a>
+            <nav class="nav-links">
+                <a href="#story">Our Story</a>
+                <a href="#coffees">Coffees</a>
+                <a href="#brew-guides">Brew Guides</a>
+                <a href="#subscriptions">Subscriptions</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Section 1: Hero -->
+        <section class="hero container" id="home">
+            <div class="hero-content">
+                <h1>Roasted by the Sea. Brewed for the Soul.</h1>
+                <p>Welcome to Driftwood Roasters, Goa's premier specialty coffee destination. We source the finest beans from India's most celebrated estates and roast them with precision in our coastal roastery. Experience the perfect harmony of sun, sand, and exceptional coffee.</p>
+                <p>Our journey began with a simple idea: that coffee should be as refreshing and invigorating as a morning breeze off the Arabian Sea. Every batch we roast is a testament to our commitment to quality, sustainability, and the vibrant culture of Goa.</p>
+                <a href="#coffees" class="btn">Explore Our Coffees</a>
+            </div>
+            <div class="hero-image">
+                <!-- Hand-drawn pour-over product artifact SVG -->
+                <svg viewBox="0 0 200 250" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);">
+                    <!-- Dripper -->
+                    <path d="M40 80 L160 80 L120 150 L80 150 Z" />
+                    <!-- Filter paper sticking out -->
+                    <path d="M30 70 L170 70 L160 80 L40 80 Z" stroke-dasharray="4 4"/>
+                    <!-- Carafe/Server -->
+                    <path d="M85 150 C70 180 50 200 50 230 C50 240 60 245 100 245 C140 245 150 240 150 230 C150 200 130 180 115 150" />
+                    <!-- Coffee level in carafe -->
+                    <path d="M60 210 Q100 215 140 210" />
+                    <!-- Handle -->
+                    <path d="M145 170 C170 170 180 190 170 210 C160 230 148 225 148 225" />
+                    <!-- Steam -->
+                    <path d="M90 50 Q100 30 90 10" />
+                    <path d="M110 60 Q120 40 110 20" />
+                    <!-- Base/Stand -->
+                    <path d="M70 150 L130 150" stroke-width="5"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Section 2: Our Story -->
+        <section id="story" style="background-color: var(--color-surface);">
+            <div class="container">
+                <h2>Our Story: From the Hills to the Coast</h2>
+                <p>Driftwood Roasters was born out of a profound love for two things: the unparalleled complexity of Indian specialty coffee and the laid-back, soulful rhythm of life in Goa. Founded by a group of passionate coffee professionals who traded the bustling city life for the serene beaches of the Konkan coast, our roastery is a sanctuary for those who appreciate the finer nuances of a perfectly brewed cup.</p>
+                <p>The name "Driftwood" reflects our philosophy. Just as driftwood is shaped and refined by the relentless yet gentle forces of the ocean, our coffee is meticulously crafted through a process that respects the natural characteristics of the bean while bringing out its most extraordinary flavors. We believe that great coffee is not just a beverage; it is an experience, a moment of pause in a chaotic world, a connection to the earth and the hands that nurtured it.</p>
+                <p>Our roastery, located in a restored Portuguese villa in North Goa, is more than just a production facility. It is a community hub, a place where locals and travelers alike gather to share stories, ideas, and, of course, exceptional coffee. The salty sea air, the warm tropical sun, and the vibrant local culture all seep into the very essence of what we do, making every cup of Driftwood coffee a true taste of Goa.</p>
+                <p>We spend months traveling across the Western Ghats, visiting remote estates in Chikmagalur, Coorg, and the Nilgiris. We build direct, meaningful relationships with farmers who share our dedication to sustainable and ethical agricultural practices. By cutting out the middlemen, we ensure that the farmers receive a fair price for their hard work, and we get access to the most exclusive, high-quality micro-lots available.</p>
+                <!-- Hand-drawn SVG 2: Sun/Wave/Goa -->
+                <svg class="inline-svg" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="30" stroke-dasharray="5 5" />
+                    <path d="M20 60 Q35 40 50 60 T80 60" />
+                    <path d="M20 70 Q35 50 50 70 T80 70" />
+                    <path d="M50 10 L50 20 M80 20 L73 27 M90 50 L80 50 M80 80 L73 73 M50 90 L50 80 M20 80 L27 73 M10 50 L20 50 M20 20 L27 27" />
+                </svg>
+            </div>
+        </section>
+
+        <!-- Section 3: Sourcing & Sustainability -->
+        <section id="sourcing">
+            <div class="container">
+                <h2>Sourcing & Sustainability</h2>
+                <p>At Driftwood Roasters, we recognize that the journey of a coffee bean from a distant hillside to your morning cup is long and complex. We take our responsibility to the environment and the coffee-growing communities very seriously. Our sourcing model is built on the pillars of transparency, equity, and ecological stewardship.</p>
+                <p>We exclusively purchase shade-grown, bird-friendly coffees. The canopy of native trees not only provides crucial habitat for local wildlife but also slows the maturation of the coffee cherries, allowing them to develop denser, more complex flavor profiles. We prioritize estates that employ organic farming methods, minimizing the use of synthetic fertilizers and pesticides to protect the delicate biodiversity of the Western Ghats.</p>
+                <p>Our commitment to sustainability extends beyond the farm. In our Goan roastery, we utilize energy-efficient roasting equipment and have implemented a comprehensive zero-waste program. Our packaging is 100% compostable, made from plant-based materials that break down naturally without leaving harmful microplastics behind. We also repurpose our coffee chaff and spent grounds, donating them to local organic farms to be used as nutrient-rich compost.</p>
+                <p>When you choose Driftwood Roasters, you are not just buying a bag of coffee. You are supporting a supply chain that values human dignity and environmental health. You are helping to preserve the pristine landscapes of India's coffee-growing regions and contributing to the prosperity of the farmers who dedicate their lives to this incredible craft.</p>
+                <!-- Hand-drawn SVG 3: Coffee Plant/Bean -->
+                <svg class="inline-svg" viewBox="0 0 100 100">
+                    <path d="M50 90 L50 20" />
+                    <path d="M50 70 Q30 80 20 60 Q40 50 50 70" />
+                    <path d="M50 50 Q70 60 80 40 Q60 30 50 50" />
+                    <path d="M50 30 Q30 40 25 20 Q45 15 50 30" />
+                    <ellipse cx="30" cy="55" rx="4" ry="6" />
+                    <ellipse cx="70" cy="45" rx="4" ry="6" />
+                </svg>
+            </div>
+        </section>
+
+        <!-- Section 4: Our Coffees -->
+        <section id="coffees" style="background-color: var(--color-surface);">
+            <div class="container">
+                <h2>Our Coffees</h2>
+                <p>Discover our carefully curated selection of single-origin coffees and signature blends. Each offering is roasted to order, ensuring that you receive the freshest, most vibrant coffee possible. Whether you prefer the bright, fruity notes of a light roast or the deep, chocolatey comfort of a dark roast, we have something to delight your palate.</p>
+                
+                <div class="origins-grid">
+                    <!-- Card 1 -->
+                    <div class="card">
+                        <h3>Monsoon Malabar AA</h3>
+                        <p><strong>Origin:</strong> Malabar Coast, Karnataka</p>
+                        <p><strong>Process:</strong> Monsooned</p>
+                        <p><strong>Tasting Notes:</strong> Dark Chocolate, Earthy, Spiced Rum, Heavy Body.</p>
+                        <p>A quintessential Indian coffee, exposed to the moisture-laden monsoon winds for months. This unique process results in a remarkably low-acidity cup with a heavy, syrupy body and intense earthy flavors. Perfect for espresso or a robust French press.</p>
+                        <div class="card-price">₹ 650</div>
+                        <button class="btn">Add to Cart</button>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="card">
+                        <h3>Attikan Estate</h3>
+                        <p><strong>Origin:</strong> Biligirirangan Hills, Karnataka</p>
+                        <p><strong>Process:</strong> Washed</p>
+                        <p><strong>Tasting Notes:</strong> Milk Chocolate, Roasted Almonds, Caramel, Balanced.</p>
+                        <p>Grown at some of the highest elevations in South India, Attikan Estate produces a classic, incredibly balanced cup. The washed process highlights its clean, sweet profile, making it a versatile crowd-pleaser that shines in almost any brewing method.</p>
+                        <div class="card-price">₹ 700</div>
+                        <button class="btn">Add to Cart</button>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="card">
+                        <h3>Ratnagiri Estate Naturals</h3>
+                        <p><strong>Origin:</strong> Bababudangiri, Karnataka</p>
+                        <p><strong>Process:</strong> Natural</p>
+                        <p><strong>Tasting Notes:</strong> Strawberry Jam, Vanilla, Cocoa Nibs, Winey.</p>
+                        <p>A spectacular naturally processed coffee from the renowned Ratnagiri Estate. The cherries are dried whole in the sun, imparting intense fruit-forward flavors and a wine-like acidity. A must-try for adventurous coffee lovers who enjoy a vibrant, juicy cup.</p>
+                        <div class="card-price">₹ 850</div>
+                        <button class="btn">Add to Cart</button>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="card">
+                        <h3>Riverdale Estate</h3>
+                        <p><strong>Origin:</strong> Yercaud, Tamil Nadu</p>
+                        <p><strong>Process:</strong> Honey</p>
+                        <p><strong>Tasting Notes:</strong> Orange Blossom, Honeycomb, Black Tea, Delicate.</p>
+                        <p>The honey process leaves some of the sticky mucilage on the bean during drying, resulting in a cup that is sweeter than a washed coffee but cleaner than a natural. This lot from Riverdale is elegant and floral, with a lingering tea-like finish.</p>
+                        <div class="card-price">₹ 750</div>
+                        <button class="btn">Add to Cart</button>
+                    </div>
+                    <!-- Card 5 -->
+                    <div class="card">
+                        <h3>Kalledevarapura Estate</h3>
+                        <p><strong>Origin:</strong> Chikmagalur, Karnataka</p>
+                        <p><strong>Process:</strong> Washed</p>
+                        <p><strong>Tasting Notes:</strong> Green Apple, Toffee, Hazelnut, Bright.</p>
+                        <p>One of the oldest estates in India, Kalledevarapura consistently produces exceptional coffees. This washed lot features a crisp, malic acidity reminiscent of green apples, balanced by a rich toffee sweetness. Excellent as a pour-over.</p>
+                        <div class="card-price">₹ 680</div>
+                        <button class="btn">Add to Cart</button>
+                    </div>
+                    <!-- Card 6 -->
+                    <div class="card">
+                        <h3>The Goan Sunset Blend</h3>
+                        <p><strong>Origin:</strong> Blend (Chikmagalur & Coorg)</p>
+                        <p><strong>Process:</strong> Mixed</p>
+                        <p><strong>Tasting Notes:</strong> Dark Cherry, Molasses, Baking Spices, Rich.</p>
+                        <p>Our signature house blend, crafted to capture the warmth and richness of a Goan sunset. We combine a bright, washed coffee with a heavy-bodied natural to create a complex, deeply satisfying cup that pairs perfectly with milk or stands beautifully on its own.</p>
+                        <div class="card-price">₹ 600</div>
+                        <button class="btn">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Roasting Philosophy -->
+        <section id="roasting">
+            <div class="container">
+                <h2>Our Roasting Philosophy</h2>
+                <p>Roasting coffee is a delicate dance between art and science. At Driftwood Roasters, we approach this craft with immense respect for the raw material. Our goal is never to impose a "roaster's signature" on the beans, but rather to unlock and highlight the inherent flavors that the farmer worked so hard to cultivate.</p>
+                <p>We roast in small batches using a state-of-the-art drum roaster, meticulously tracking temperature curves, development time, and rate of rise. Every single origin we offer undergoes rigorous profile testing. We cup dozens of sample roasts, making microscopic adjustments to the heat application and airflow until we find the absolute sweet spot—the point where sweetness, acidity, and body are in perfect harmony.</p>
+                <p>We believe that freshness is paramount. Coffee is a perishable agricultural product, and its volatile aromatic compounds begin to dissipate shortly after roasting. That is why we operate on a strict roast-to-order model. When you place an order with Driftwood Roasters, your coffee is roasted specifically for you, packaged immediately in bags with one-way degassing valves, and shipped out the very next day. This ensures that you experience the coffee at its absolute peak flavor potential.</p>
+                <p>Our roasting team is constantly learning, experimenting, and pushing the boundaries of what Indian specialty coffee can be. We host regular public cupping sessions at our Goa roastery, inviting our community to taste alongside us, learn about the roasting process, and develop their own palates. We believe that education and transparency are the keys to elevating the coffee culture in India.</p>
+                <!-- Hand-drawn SVG 4: Roaster/Fire -->
+                <svg class="inline-svg" viewBox="0 0 100 100">
+                    <!-- Drum -->
+                    <circle cx="50" cy="40" r="25" />
+                    <circle cx="50" cy="40" r="15" stroke-dasharray="4 4" />
+                    <!-- Stand -->
+                    <path d="M25 40 L25 80 L75 80 L75 40" />
+                    <!-- Fire -->
+                    <path d="M40 80 Q45 70 50 80 Q55 65 60 80" fill="var(--color-primary)" stroke="none" />
+                    <path d="M40 80 Q45 70 50 80 Q55 65 60 80" />
+                    <!-- Beans falling -->
+                    <ellipse cx="45" cy="90" rx="2" ry="3" />
+                    <ellipse cx="55" cy="92" rx="2" ry="3" />
+                    <ellipse cx="50" cy="95" rx="2" ry="3" />
+                </svg>
+            </div>
+        </section>
+
+        <!-- Section 6: Brew Guides -->
+        <section id="brew-guides" style="background-color: var(--color-surface);">
+            <div class="container tabs-container">
+                <h2>Brew Guides</h2>
+                <p>Great coffee deserves to be brewed with care. We have put together these comprehensive guides to help you get the best possible results at home, no matter which brewing method you prefer. Remember, these are starting points—feel free to experiment with grind size, water temperature, and ratios to find the perfect cup for your taste.</p>
+                
+                <div class="tab-list" role="tablist" aria-label="Brewing Methods">
+                    <button class="tab-btn" role="tab" aria-selected="true" aria-controls="panel-v60" id="tab-v60">Hario V60</button>
+                    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-aeropress" id="tab-aeropress">AeroPress</button>
+                    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-frenchpress" id="tab-frenchpress">French Press</button>
+                    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-espresso" id="tab-espresso">Espresso</button>
+                </div>
+
+                <div id="panel-v60" class="tab-panel" role="tabpanel" aria-labelledby="tab-v60" aria-hidden="false">
+                    <h3>Hario V60 Pour-Over</h3>
+                    <p>The V60 is our favorite method for highlighting the delicate floral and fruity notes of our lighter roasts. It produces a clean, bright, and highly articulate cup.</p>
+                    <ul>
+                        <li><strong>Dose:</strong> 15g coffee</li>
+                        <li><strong>Water:</strong> 250g at 93°C (200°F)</li>
+                        <li><strong>Grind:</strong> Medium-fine (like table salt)</li>
+                        <li><strong>Time:</strong> 2:30 - 3:00 minutes</li>
+                    </ul>
+                    <p><strong>Instructions:</strong> Rinse the paper filter with hot water and discard the water. Add the ground coffee and level the bed. Start your timer and pour 45g of water to bloom the coffee. Wait 45 seconds. Slowly pour the remaining water in concentric circles, keeping the water level consistent. Allow the water to draw down completely.</p>
+                </div>
+
+                <div id="panel-aeropress" class="tab-panel" role="tabpanel" aria-labelledby="tab-aeropress" aria-hidden="true">
+                    <h3>AeroPress</h3>
+                    <p>The AeroPress is incredibly versatile and forgiving. This recipe uses the inverted method to produce a rich, full-bodied cup that is perfect for our medium and darker roasts.</p>
+                    <ul>
+                        <li><strong>Dose:</strong> 18g coffee</li>
+                        <li><strong>Water:</strong> 200g at 90°C (194°F)</li>
+                        <li><strong>Grind:</strong> Medium-fine</li>
+                        <li><strong>Time:</strong> 2:00 minutes</li>
+                    </ul>
+                    <p><strong>Instructions:</strong> Invert the AeroPress and add the coffee. Pour 50g of water and stir vigorously to ensure all grounds are wet. Wait 30 seconds. Pour the remaining 150g of water and stir gently. Attach the cap with a rinsed paper filter. At 1:30, flip the AeroPress onto your mug and press down slowly for 30 seconds.</p>
+                </div>
+
+                <div id="panel-frenchpress" class="tab-panel" role="tabpanel" aria-labelledby="tab-frenchpress" aria-hidden="true">
+                    <h3>French Press</h3>
+                    <p>The classic immersion brewer. The French Press allows all the coffee oils to end up in your cup, resulting in a heavy, textured body. Ideal for our Monsoon Malabar and Goan Sunset Blend.</p>
+                    <ul>
+                        <li><strong>Dose:</strong> 30g coffee</li>
+                        <li><strong>Water:</strong> 500g at 95°C (203°F)</li>
+                        <li><strong>Grind:</strong> Coarse (like sea salt)</li>
+                        <li><strong>Time:</strong> 4:00 minutes</li>
+                    </ul>
+                    <p><strong>Instructions:</strong> Add the coarse coffee to the carafe. Pour all 500g of water vigorously to ensure all grounds are saturated. Start your timer. At 4:00 minutes, use a spoon to gently break the crust that has formed at the top and scoop away the foam. Place the plunger on top and press down slowly. Pour immediately to stop the extraction.</p>
+                </div>
+
+                <div id="panel-espresso" class="tab-panel" role="tabpanel" aria-labelledby="tab-espresso" aria-hidden="true">
+                    <h3>Espresso</h3>
+                    <p>Espresso is an intense, concentrated beverage that requires precision. This is a standard starting recipe for a double shot, but you will need to dial in based on your specific machine and grinder.</p>
+                    <ul>
+                        <li><strong>Dose:</strong> 18g coffee</li>
+                        <li><strong>Yield:</strong> 36g to 40g liquid espresso</li>
+                        <li><strong>Grind:</strong> Very fine</li>
+                        <li><strong>Time:</strong> 25 - 30 seconds</li>
+                    </ul>
+                    <p><strong>Instructions:</strong> Grind the coffee into your portafilter. Distribute the grounds evenly and tamp with firm, level pressure. Lock the portafilter into the group head and start the extraction immediately. Look for a slow, syrupy flow that gradually lightens in color. Stop the shot when you reach your target weight.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Subscriptions -->
+        <section id="subscriptions">
+            <div class="container">
+                <h2>Coffee Subscriptions</h2>
+                <p>Never run out of great coffee again. Join the Driftwood Roasters subscription program and have freshly roasted beans delivered directly to your doorstep on your schedule. Whether you are a casual drinker or a daily aficionado, we have a plan that fits your lifestyle. Enjoy exclusive access to limited-release micro-lots and significant savings when you subscribe annually.</p>
+                
+                <div class="pricing-toggle">
+                    <span id="label-monthly" style="font-weight: bold;">Monthly</span>
+                    <label class="switch">
+                        <input type="checkbox" id="billing-toggle" aria-label="Toggle billing period">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="label-annual">Annually (Save 20%)</span>
+                </div>
+
+                <div class="pricing-grid">
+                    <div class="card pricing-card">
+                        <h3>The Casual Brewer</h3>
+                        <p>Perfect for the weekend coffee lover.</p>
+                        <div class="price">₹<span class="amount" data-monthly="600" data-annual="480">600</span><span>/mo</span></div>
+                        <ul style="list-style: none; margin: var(--spacing-lg) 0; text-align: left;">
+                            <li>✓ 1 x 250g bag per month</li>
+                            <li>✓ Roaster's choice single origin</li>
+                            <li>✓ Free shipping in India</li>
+                            <li>✓ Cancel anytime</li>
+                        </ul>
+                        <button class="btn" style="width: 100%;">Subscribe Now</button>
+                    </div>
+
+                    <div class="card pricing-card featured">
+                        <h3>The Daily Ritual</h3>
+                        <p>Our most popular plan for daily drinkers.</p>
+                        <div class="price">₹<span class="amount" data-monthly="1100" data-annual="880">1100</span><span>/mo</span></div>
+                        <ul style="list-style: none; margin: var(--spacing-lg) 0; text-align: left;">
+                            <li>✓ 2 x 250g bags per month</li>
+                            <li>✓ Choose your preferred roast profile</li>
+                            <li>✓ Free shipping in India</li>
+                            <li>✓ 10% off brewing equipment</li>
+                        </ul>
+                        <button class="btn" style="width: 100%;">Subscribe Now</button>
+                    </div>
+
+                    <div class="card pricing-card">
+                        <h3>The Aficionado</h3>
+                        <p>For the serious coffee enthusiast.</p>
+                        <div class="price">₹<span class="amount" data-monthly="2000" data-annual="1600">2000</span><span>/mo</span></div>
+                        <ul style="list-style: none; margin: var(--spacing-lg) 0; text-align: left;">
+                            <li>✓ 4 x 250g bags per month</li>
+                            <li>✓ Exclusive access to rare micro-lots</li>
+                            <li>✓ Free shipping in India</li>
+                            <li>✓ Free annual cupping class in Goa</li>
+                        </ul>
+                        <button class="btn" style="width: 100%;">Subscribe Now</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: FAQ -->
+        <section id="faq" style="background-color: var(--color-surface);">
+            <div class="container">
+                <h2 style="text-align: center;">Frequently Asked Questions</h2>
+                <p style="text-align: center; max-width: 600px; margin: 0 auto var(--spacing-xl) auto;">Got questions? We have answers. If you cannot find what you are looking for here, feel free to reach out to our support team.</p>
+                
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <button class="accordion-btn" aria-expanded="false">
+                            How fresh is your coffee?
+                            <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="accordion-content-inner">
+                                We roast all our coffee to order. This means that when you place an order on our website, we roast the beans specifically for you and ship them out within 24 hours. You will receive your coffee at peak freshness, usually 3-5 days off roast, which is the perfect time to start brewing.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn" aria-expanded="false">
+                            Do you ship internationally?
+                            <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="accordion-content-inner">
+                                Currently, we only ship within India. We are working hard to establish reliable and affordable international shipping routes so that we can share the incredible flavors of Indian specialty coffee with the rest of the world. Sign up for our newsletter to be notified when international shipping becomes available.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn" aria-expanded="false">
+                            What is the difference between Washed, Natural, and Honey processes?
+                            <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="accordion-content-inner">
+                                These terms refer to how the coffee seed (bean) is removed from the fruit (cherry). In the Washed process, the fruit is completely removed before drying, resulting in a clean, bright cup. In the Natural process, the cherry is dried whole, imparting intense fruity flavors and a heavier body. The Honey process is a hybrid where the skin is removed but some sticky fruit mucilage is left on during drying, creating a sweet and balanced cup.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn" aria-expanded="false">
+                            Can I visit your roastery in Goa?
+                            <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="accordion-content-inner">
+                                Absolutely! We love hosting visitors at our roastery in North Goa. We have a small cafe attached where you can taste our latest offerings, purchase beans and equipment, and watch the roasting process in action. We are open Tuesday through Sunday from 9 AM to 6 PM.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 9: Community & Testimonials -->
+        <section id="community">
+            <div class="container">
+                <h2>The Driftwood Community</h2>
+                <p>We are incredibly proud of the community that has grown around Driftwood Roasters. From home brewers experimenting in their kitchens to professional baristas pulling shots in top cafes across the country, our coffee brings people together. We believe that coffee is a catalyst for connection, conversation, and creativity.</p>
+                <p>Here is what some of our wonderful customers have to say about their experience with Driftwood Roasters:</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-lg);">
+                    <blockquote style="padding: var(--spacing-lg); background: var(--color-surface); border-left: 4px solid var(--color-primary); border-radius: var(--radius-md);">
+                        "The Ratnagiri Naturals completely changed my perception of Indian coffee. The strawberry notes are so clear and vibrant. It is like drinking a fruit juice! Driftwood's roasting is spot on."
+                        <br><br><strong>- Rohan M., Mumbai</strong>
+                    </blockquote>
+                    <blockquote style="padding: var(--spacing-lg); background: var(--color-surface); border-left: 4px solid var(--color-primary); border-radius: var(--radius-md);">
+                        "I have been on the Daily Ritual subscription for six months now. The convenience is unbeatable, and the quality is consistently excellent. Opening that fresh bag of coffee every two weeks is the highlight of my mornings."
+                        <br><br><strong>- Priya S., Bangalore</strong>
+                    </blockquote>
+                    <blockquote style="padding: var(--spacing-lg); background: var(--color-surface); border-left: 4px solid var(--color-primary); border-radius: var(--radius-md);">
+                        "Visiting the roastery in Goa was a fantastic experience. The team is so knowledgeable and passionate. They took the time to explain their sourcing and roasting process, and the pour-over I had was phenomenal."
+                        <br><br><strong>- Amit K., Delhi</strong>
+                    </blockquote>
+                </div>
+                <p style="margin-top: var(--spacing-xl);">Join our community on social media to stay updated on new releases, brewing tips, and behind-the-scenes looks at our roastery. Tag us in your brewing photos—we love seeing how you enjoy our coffee!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Section 10: Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <h2 style="font-family: var(--font-serif); color: var(--color-primary); margin-bottom: var(--spacing-md);">Driftwood Roasters</h2>
+            <p>Roasted by the Sea. Brewed for the Soul.</p>
+            <p>123 Roastery Lane, Assagao, North Goa, 403507</p>
+            <p>Email: hello@driftwoodroasters.in | Phone: +91 98765 43210</p>
+            <div style="margin-top: var(--spacing-lg); color: var(--color-muted);">
+                &copy; 2023 Driftwood Roasters. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 1. Dark Mode Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+        
+        // Check local storage
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            root.setAttribute('data-theme', 'dark');
+            updateToggleIcon('dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                root.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                updateToggleIcon('light');
+            } else {
+                root.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                updateToggleIcon('dark');
+            }
+        });
+
+        function updateToggleIcon(theme) {
+            if (theme === 'dark') {
+                themeToggle.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+            } else {
+                themeToggle.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+            }
+        }
+
+        // 2. Brew Guides Tabs
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active state from all
+                tabBtns.forEach(b => b.setAttribute('aria-selected', 'false'));
+                tabPanels.forEach(p => p.setAttribute('aria-hidden', 'true'));
+
+                // Set active state on clicked
+                btn.setAttribute('aria-selected', 'true');
+                const panelId = btn.getAttribute('aria-controls');
+                document.getElementById(panelId).setAttribute('aria-hidden', 'false');
+            });
+        });
+
+        // 3. Subscriptions Toggle
+        const billingToggle = document.getElementById('billing-toggle');
+        const amounts = document.querySelectorAll('.amount');
+        const labelMonthly = document.getElementById('label-monthly');
+        const labelAnnual = document.getElementById('label-annual');
+
+        billingToggle.addEventListener('change', (e) => {
+            const isAnnual = e.target.checked;
+            
+            if (isAnnual) {
+                labelAnnual.style.fontWeight = 'bold';
+                labelMonthly.style.fontWeight = 'normal';
+            } else {
+                labelMonthly.style.fontWeight = 'bold';
+                labelAnnual.style.fontWeight = 'normal';
+            }
+
+            amounts.forEach(amount => {
+                if (isAnnual) {
+                    amount.textContent = amount.getAttribute('data-annual');
+                } else {
+                    amount.textContent = amount.getAttribute('data-monthly');
+                }
+            });
+        });
+
+        // 4. FAQ Accordion
+        const accordionBtns = document.querySelectorAll('.accordion-btn');
+
+        accordionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const expanded = btn.getAttribute('aria-expanded') === 'true';
+                
+                // Close all others (optional, but good UX)
+                accordionBtns.forEach(b => {
+                    b.setAttribute('aria-expanded', 'false');
+                    b.nextElementSibling.style.maxHeight = null;
+                });
+
+                if (!expanded) {
+                    btn.setAttribute('aria-expanded', 'true');
+                    const content = btn.nextElementSibling;
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
