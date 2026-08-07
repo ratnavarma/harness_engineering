@@ -1,6 +1,11 @@
-"""Day 1: package boundary.
+"""Day 4: Assembler's intentionally small public API.
 
-Concept: establish the public home for the Assembler harness.
-Design rules: keep package initialization empty until the day that defines its
-public entry point.
+Concept: export the composition class and extension primitives from one place.
+Design rules: keep imports explicit and expose only the stable teaching surface.
 """
+
+from .harness import Harness
+from .security import Policy
+from .tools import Tool, tool
+
+__all__ = ["Harness", "Policy", "Tool", "tool"]
