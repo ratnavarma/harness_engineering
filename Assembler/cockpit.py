@@ -1,24 +1,28 @@
-"""Day 5 extension: a read-only local browser cockpit for Assembler.
+"""Day 5 extension: a local browser cockpit for Assembler.
 
-Concept: make durable sessions and completed work inspectable without granting
-browser clients tool authority. Design rules: standard library only, bind to
-localhost, and confine every requested transcript to the selected root.
+Concept: make durable sessions and visible product-building activity inspectable.
+Design rules: standard library only, bind to localhost, expose execution modes
+explicitly, and confine every requested transcript and run to the selected root.
 """
 
 import argparse
 import json
+import queue
+import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from . import session
+from .harness import Harness
+from .security import Policy
 
 
 def serve(workdir=".", port: int = 8765, open_browser: bool = True) -> None:
-    """Serve a local read-only cockpit for sessions below `workdir`."""
+    """Serve a local cockpit for sessions and runs below `workdir`."""
     root = Path(workdir).resolve()
-    handler = _handler(root)
+    handler = _handler(root, _RunState(root))
     server = ThreadingHTTPServer(("127.0.0.1", port), handler)
     url = f"http://127.0.0.1:{server.server_port}"
     print(f"Assembler cockpit: {url} · root={root}")
@@ -43,12 +47,30 @@ def main(argv=None) -> int:
     return 0
 
 
-def _handler(root: Path):
+def _handler(root: Path, runs):
     """Build one request handler class bound to a fixed cockpit root."""
     class CockpitHandler(BaseHTTPRequestHandler):
+        def do_POST(self):  # noqa: N802 - required BaseHTTPRequestHandler name.
+            """Start one local harness run from the cockpit prompt form."""
+            if urlparse(self.path).path != "/api/run":
+                return self._json({"error": "not found"}, 404)
+            try:
+                size = int(self.headers.get("Content-Length", 0))
+                request = json.loads(self.rfile.read(size))
+                runs.start(str(request["prompt"]), str(request.get("mode", "safe")))
+                self._json({"ok": True})
+            except (KeyError, ValueError, json.JSONDecodeError) as error:
+                self._json({"error": str(error)}, 400)
+
         def do_GET(self):  # noqa: N802 - required BaseHTTPRequestHandler name.
             """Serve the cockpit page or its read-only JSON endpoints."""
             parsed = urlparse(self.path)
+            if parsed.path == "/api/run":
+                return self._json(runs.snapshot())
+            return self._get(parsed)
+
+        def _get(self, parsed):
+            """Handle browser page and durable-session endpoint requests."""
             if parsed.path == "/":
                 return self._send("text/html; charset=utf-8", _PAGE.encode())
             if parsed.path == "/api/sessions":
@@ -78,6 +100,53 @@ def _handler(root: Path):
     return CockpitHandler
 
 
+class _RunState:
+    """Own one background harness run and a browser-safe visible event trace."""
+
+    def __init__(self, root: Path) -> None:
+        """Create an idle run state confined to the selected cockpit root."""
+        self.root, self.events, self.lock = root, queue.Queue(), threading.Lock()
+        self.running, self.final, self.error = False, "", ""
+
+    def start(self, prompt: str, mode: str) -> None:
+        """Start a new local run when no other browser-triggered run is active."""
+        if mode not in {"safe", "yolo", "read-only"}:
+            raise ValueError("invalid execution mode")
+        if not prompt.strip():
+            raise ValueError("prompt is required")
+        with self.lock:
+            if self.running:
+                raise ValueError("a run is already active")
+            self.running, self.final, self.error = True, "", ""
+            self.events = queue.Queue()
+        threading.Thread(target=self._run, args=(prompt, mode), daemon=True).start()
+
+    def _run(self, prompt: str, mode: str) -> None:
+        """Run the harness and expose only its visible execution events."""
+        def event(kind, payload):
+            calls = [{"name": call["name"], "args": call.get("args", {})}
+                     for call in payload.get("tool_calls", [])]
+            self.events.put({"kind": kind, "text": payload.get("text", ""),
+                             "name": payload.get("name", ""), "tool_calls": calls})
+        try:
+            policy = Policy(mode, lambda call, reason: False)
+            self.final = Harness(self.root, policy=policy, on_event=event).run(prompt)
+        except Exception as error:
+            self.error = f"{type(error).__name__}: {error}"
+        finally:
+            self.running = False
+
+    def snapshot(self) -> dict:
+        """Return new trace events and current completion state for polling UI."""
+        events = []
+        while True:
+            try:
+                events.append(self.events.get_nowait())
+            except queue.Empty:
+                break
+        return {"running": self.running, "events": events, "final": self.final, "error": self.error}
+
+
 def _sessions(root: Path) -> list[dict]:
     """Summarize every durable session under a cockpit root."""
     records = []
@@ -93,9 +162,9 @@ def _sessions(root: Path) -> list[dict]:
 
 
 _PAGE = """<!doctype html><meta charset=utf-8><title>Assembler Cockpit</title>
-<style>body{margin:0;background:#101925;color:#eaf1f2;font:15px system-ui}header{padding:24px 7vw;background:#18394a}main{display:grid;grid-template-columns:38% 62%;min-height:calc(100vh - 78px)}section{padding:22px;border-right:1px solid #345}button{width:100%;margin:6px 0;padding:12px;text-align:left;color:#eaf1f2;background:#1b2a38;border:1px solid #456;border-radius:6px}button:hover{background:#25475a}.meta{color:#9dc7c3;font-size:12px}pre{white-space:pre-wrap;word-break:break-word;background:#15222e;padding:16px;border-radius:6px}.tool{color:#f3b27b}.assistant{color:#a9dbd8}</style>
-<header><b>ASSEMBLER COCKPIT</b> <span class=meta>read-only session telemetry · refreshes every 5 seconds</span></header><main><section><h2>Sessions</h2><div id=list>Loading…</div></section><section><h2 id=title>Transcript</h2><pre id=tape>Select a session.</pre></section></main>
-<script>let selected='';const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));async function sessions(){let rows=await fetch('/api/sessions').then(r=>r.json());list.innerHTML=rows.length?rows.map(x=>`<button onclick="openSession('${encodeURIComponent(x.path)}')"><b>${esc(x.path)}</b><br><span class=meta>${x.messages} messages · ${x.turns} turns · ${x.tools} tools</span><br>${esc(x.final).slice(0,120)}</button>`).join(''):'No durable sessions found.'}async function openSession(path){selected=decodeURIComponent(path);let d=await fetch('/api/session?path='+encodeURIComponent(selected)).then(r=>r.json());title.textContent=selected;tape.innerHTML=d.messages.map(m=>`<span class=${m.role}>${esc(m.role)}${m.name?' · '+esc(m.name):''}</span>\n${esc(m.text||'')}${m.tool_calls?'\n→ '+m.tool_calls.map(x=>x.name).join(', '):''}`).join('\n\n')}sessions();setInterval(sessions,5000)</script>"""
+<style>body{margin:0;background:#101925;color:#eaf1f2;font:15px system-ui}header{padding:20px 7vw;background:#18394a}main{display:grid;grid-template-columns:34% 66%;min-height:calc(100vh - 70px)}section{padding:22px;border-right:1px solid #345}button,select,textarea{font:inherit}button{margin:6px 0;padding:12px;color:#eaf1f2;background:#1b2a38;border:1px solid #456;border-radius:6px}.session{width:100%;text-align:left}.run{background:#e66036;font-weight:bold}.meta{color:#9dc7c3;font-size:12px}textarea{width:100%;min-height:100px;padding:12px;background:#15222e;color:#fff;border:1px solid #456;border-radius:6px}select{margin:8px;padding:8px;background:#15222e;color:#fff}pre{white-space:pre-wrap;word-break:break-word;background:#15222e;padding:16px;border-radius:6px}.tool{color:#f3b27b}.assistant{color:#a9dbd8}.final{border-left:4px solid #50b29f;padding-left:12px}</style>
+<header><b>ASSEMBLER COCKPIT</b> <span class=meta>local product builder · visible execution trace, not private reasoning</span></header><main><section><h2>Build</h2><textarea id=prompt placeholder="Describe the product you want to build…"></textarea><select id=mode><option value=safe>Safe — asks before writes</option><option value=yolo>Yolo — automatic inside this workdir</option><option value=read-only>Read-only</option></select><button class=run onclick=run()>Build product</button><p class=meta>Yolo permits local writes automatically. Always-deny commands remain blocked.</p><h2>Sessions</h2><div id=list>Loading…</div></section><section><h2 id=title>Live trace</h2><pre id=tape>Enter a product prompt to start.</pre></section></main>
+<script>const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));let trace=[];function show(){tape.innerHTML=trace.map(e=>`<span class=${e.kind==='assistant'?'assistant':'tool'}>${esc(e.kind)}${e.name?' · '+esc(e.name):''}</span>\n${esc(e.text||'')}${e.tool_calls?.length?'\n→ '+e.tool_calls.map(x=>x.name+'('+JSON.stringify(x.args)+')').join(', '):''}`).join('\n\n')}async function run(){let r=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt.value,mode:mode.value})});let d=await r.json();if(d.error)alert(d.error);else{trace=[];title.textContent='Live trace';show()}}async function poll(){let d=await fetch('/api/run').then(r=>r.json());if(d.events.length){trace.push(...d.events);show()}if(d.final){trace.push({kind:'assistant',text:'FINAL: '+d.final});d.final='';show()}if(d.error){trace.push({kind:'tool_end',text:'ERROR: '+d.error});show()}}async function sessions(){let rows=await fetch('/api/sessions').then(r=>r.json());list.innerHTML=rows.map(x=>`<button class=session onclick="openSession('${encodeURIComponent(x.path)}')"><b>${esc(x.path)}</b><br><span class=meta>${x.messages} messages · ${x.turns} turns · ${x.tools} tools</span></button>`).join('')||'No durable sessions found.'}async function openSession(path){let d=await fetch('/api/session?path='+path).then(r=>r.json());trace=d.messages.map(m=>({kind:m.role,name:m.name,text:m.text,tool_calls:m.tool_calls}));title.textContent=decodeURIComponent(path);show()}sessions();setInterval(()=>{sessions();poll()},1500)</script>"""
 
 
 if __name__ == "__main__":
